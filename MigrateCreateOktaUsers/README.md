@@ -20,7 +20,8 @@ Body:
 	"displayName":"JUSTIN",
 	"firstName":"Justin",
 	"lastName":"Yang"
-}
+   },
+   groupIds:["groupId1,groupId2"]
 }
 ```
 

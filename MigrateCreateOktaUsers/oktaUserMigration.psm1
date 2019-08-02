@@ -47,7 +47,6 @@ Function getOktaUser{
         [string]$token,
         [string]$UserName
     )
-    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     $headers = @{"Accept"="application/json"; "Content-Type"="application/json"; "Authorization"="SSWS ${token}"}
     try{
         $oktaUser = Invoke-RestMethod -Headers $headers -Method Get -Uri "$oktaBaseUri/users/$UserName"
@@ -84,10 +83,11 @@ Function addUsertoOktaGroups {
         [string]$oktaBaseUri,
         [string]$token,
         [string]$userId,
-        [string[]]$groupNames
+        [string[]]$groupNames,
+        [object[]]$oktaGroups
     )
-    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     $groupIds = @(getOktaGroupIdsByNames $oktaGroups $user.groupNames);
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     $headers = @{"Accept"="application/json"; "Content-Type"="application/json"; "Authorization"="SSWS $token"}
     foreach ($groupId in $groupIds) {
         try {
@@ -132,7 +132,7 @@ Function createOktaUsers {
                     Break
                 }
         } else {
-            addUsertoOktaGroups $oktaBaseUri $token $oktaUser.id $groupNames
+            addUsertoOktaGroups $oktaBaseUri $token $oktaUser.id $groupNames $oktaGroups
         }
     }
 }
@@ -166,7 +166,7 @@ Function createOktaUser {
                 Break
             }
     } else {
-        addUsertoOktaGroups $oktaBaseUri $token $oktaUser.id $user.groupNames
+        addUsertoOktaGroups $oktaBaseUri $token $oktaUser.id $user.groupNames $oktaGroups
     }
 }
 
